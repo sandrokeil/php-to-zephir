@@ -15,9 +15,19 @@ class ClassProperty
 {
     protected $myProperty;
 
+    /**
+     * @var MyClass
+     */
+    protected $myClass;
+
     public function setMyProperty($myProperty): void
     {
         $this->myProperty = $myProperty;
+    }
+
+    public function setMyClass(MyClass $myClass): void
+    {
+        $this->myClass = $myClass;
     }
 
     public function getMyProperty()

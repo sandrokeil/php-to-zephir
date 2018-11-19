@@ -196,4 +196,30 @@ CODE;
 
         $this->assertEquals($expectedCode, $current, $current);
     }
+
+    /**
+     * @test
+     */
+    public function it_converts_foreach(): void
+    {
+        $code = <<<'CODE'
+<?php
+$types = ['one', 'two', 'three'];
+
+foreach ($types as $key => $type) {
+}
+CODE;
+
+        $expectedCode = <<<'CODE'
+let types = ["one", "two", "three"];
+for key, type in types {
+}
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
 }

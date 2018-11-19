@@ -11,9 +11,18 @@ namespace PhpToZephirTest\Mock;
 class ClassProperty
 {
     protected myProperty;
+    /**
+     * @var MyClass
+     */
+    protected myClass;
     public function setMyProperty(var myProperty) -> void
     {
         let this->myProperty = myProperty;
+    }
+
+    public function setMyClass(<MyClass> myClass) -> void
+    {
+        let this->myClass = myClass;
     }
 
     public function getMyProperty()

@@ -68,7 +68,8 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
         }
     }
 
-    protected function pExpr_ArrayItem(Expr\ArrayItem $node) {
+    protected function pExpr_ArrayItem(Expr\ArrayItem $node)
+    {
         return (null !== $node->key ? $this->p($node->key) . ': ' : '')
             . ($node->byRef ? '&' : '') . $this->p($node->value);
     }
@@ -87,6 +88,40 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
     {
         return $node->name
             . (null !== $node->default ? ' = ' . $this->p($node->default) : '');
+    }
+
+    protected function pStmt_Foreach(Stmt\Foreach_ $node)
+    {
+        return 'for ' . (null !== $node->keyVar ? $this->p($node->keyVar) . ', ' : '')
+            . ($node->byRef ? '&' : '') . $this->p($node->valueVar) . ' in ' . $this->p($node->expr) . ' {'
+            . $this->pStmts($node->stmts) . $this->nl . '}';
+    }
+
+    protected function pStmt_ClassConst(Stmt\ClassConst $node)
+    {
+        return 'const ' . $this->pCommaSeparated($node->consts) . ';';
+    }
+
+    protected function pImplode(array $nodes, string $glue = '') : string
+    {
+        $pNodes = [];
+        foreach ($nodes as $node) {
+            if (null === $node) {
+                $pNodes[] = '';
+            } elseif ($node instanceof Node\Param) {
+                $param = $this->p($node);
+
+                if ($node->type instanceof Node\Name) {
+                    $param = explode(' ', $param);
+                    $param = '<' . $param[0] .'> ' . $param[1];
+                }
+                $pNodes[] = $param;
+            } else {
+                $pNodes[] = $this->p($node);
+            }
+        }
+
+        return implode($glue, $pNodes);
     }
 
     protected function pStmt_ClassMethod(Stmt\ClassMethod $node)
@@ -129,10 +164,6 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
             . (null !== $node->stmts
                 ? $this->nl . '{' . $this->pStmts($node->stmts) . $this->nl . '}'
                 : ';') . "\n";
-    }
-
-    protected function pStmt_ClassConst(Stmt\ClassConst $node) {
-        return 'const ' . $this->pCommaSeparated($node->consts) . ';';
     }
 
     protected function pStmt_Function(Stmt\Function_ $node)

@@ -8,17 +8,16 @@
 
 namespace PhpToZephirTest\Mock;
 
-class ClassProperty
+class ClassReturnArray
 {
-    protected myProperty;
-    public function setMyProperty(var myProperty) -> void
+    public function assoc() -> array
     {
-        let this->myProperty = myProperty;
+        return ["test": true, "first": "ok", 3: 123];
     }
 
-    public function getMyProperty()
+    public function index() -> array
     {
-        return this->myProperty;
+        return ["first", 2, true];
     }
 
 }

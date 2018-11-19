@@ -1,3 +1,4 @@
+<?php
 /**
  * Sandro Keil (https://sandro-keil.de)
  *
@@ -6,19 +7,13 @@
  * @license   http://github.com/sandrokeil/php-to-zephir/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace PhpToZephirTest\Mock;
 
-class ClassProperty
+class ClassConstants
 {
-    protected myProperty;
-    public function setMyProperty(var myProperty) -> void
-    {
-        let this->myProperty = myProperty;
-    }
-
-    public function getMyProperty()
-    {
-        return this->myProperty;
-    }
-
+    public const FIRST = 'testing';
+    protected const SECOND = 2;
+    private const THIRD = true;
 }

@@ -68,6 +68,11 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
         }
     }
 
+    protected function pExpr_ArrayItem(Expr\ArrayItem $node) {
+        return (null !== $node->key ? $this->p($node->key) . ': ' : '')
+            . ($node->byRef ? '&' : '') . $this->p($node->value);
+    }
+
     protected function pExpr_StaticPropertyFetch(Expr\StaticPropertyFetch $node)
     {
         return $this->pDereferenceLhs($node->class) . '::$' . $this->pObjectProperty($node->name);
@@ -86,7 +91,7 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
 
     protected function pStmt_ClassMethod(Stmt\ClassMethod $node)
     {
-        $returnType = '';
+        $returnType = null;
 
         if (null !== $node->returnType) {
             $returnType = $this->p($node->returnType);
@@ -96,11 +101,15 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
             $returnType = '<' . $this->p($node->returnType) . '>';
         }
 
-        if ($returnType === '') {
+        if ($returnType === null) {
             foreach ($node->getComments() as $comment) {
                 $matches = [];
                 if (1 === preg_match('/(@return +)([\|\\a-z]+\n)/i', $comment->getText(), $matches)) {
                     $returnType = trim($matches[2]);
+
+                    if ($returnType === 'mixed') {
+                        $returnType = null;
+                    }
                 }
             }
         }
@@ -120,6 +129,10 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
             . (null !== $node->stmts
                 ? $this->nl . '{' . $this->pStmts($node->stmts) . $this->nl . '}'
                 : ';') . "\n";
+    }
+
+    protected function pStmt_ClassConst(Stmt\ClassConst $node) {
+        return 'const ' . $this->pCommaSeparated($node->consts) . ';';
     }
 
     protected function pStmt_Function(Stmt\Function_ $node)

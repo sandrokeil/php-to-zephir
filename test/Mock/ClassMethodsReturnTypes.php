@@ -25,4 +25,11 @@ class ClassMethodsReturnTypes
         return 'error';
     }
 
+    /**
+     * @param $a
+     * @return mixed
+     */
+    public function mixed($a)
+    {
+    }
 }

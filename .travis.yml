@@ -1,0 +1,53 @@
+language: php
+
+matrix:
+  fast_finish: true
+  include:
+  - php: 7.1
+    env:
+    - DEPENDENCIES=""
+    - EXECUTE_CS_CHECK=true
+  - php: 7.1
+    env:
+    - DEPENDENCIES="--prefer-lowest --prefer-stable"
+  - php: 7.2
+    env:
+    - DEPENDENCIES=""
+    - TEST_COVERAGE=true
+  - php: 7.2
+    env:
+    - DEPENDENCIES="--prefer-lowest --prefer-stable"
+  - php: 7.3
+    env:
+    - DEPENDENCIES=""
+  - php: 7.3
+    env:
+    - DEPENDENCIES="--prefer-lowest --prefer-stable"
+  - php: nightly
+    env:
+    - DEPENDENCIES=""
+  - php: nightly
+    env:
+    - DEPENDENCIES="--prefer-lowest --prefer-stable"
+
+  allow_failures:
+  - php: nightly
+
+cache:
+  directories:
+  - $HOME/.composer/cache
+  - $HOME/.php-cs-fixer
+  - $HOME/.local
+
+before_script:
+- mkdir -p "$HOME/.php-cs-fixer"
+- composer self-update
+- composer update --prefer-dist $DEPENDENCIES
+
+script:
+- if [[ $EXECUTE_CS_CHECK == 'true' ]]; then composer cs-check; fi
+- if [[ $EXECUTE_CS_CHECK == 'true' ]]; then composer docheader; fi
+- if [[ $TEST_COVERAGE == 'true' ]]; then php -dzend_extension=xdebug.so ./vendor/bin/phpunit --coverage-text --coverage-clover ./build/logs/clover.xml; else php ./vendor/bin/phpunit ; fi
+
+after_success:
+- if [[ $TEST_COVERAGE == 'true' ]]; then php vendor/bin/coveralls -v; fi

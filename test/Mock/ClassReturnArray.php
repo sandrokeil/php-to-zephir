@@ -1,3 +1,4 @@
+<?php
 /**
  * Sandro Keil (https://sandro-keil.de)
  *
@@ -6,19 +7,27 @@
  * @license   http://github.com/sandrokeil/php-to-zephir/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace PhpToZephirTest\Mock;
 
-class ClassProperty
+class ClassReturnArray
 {
-    protected myProperty;
-    public function setMyProperty(var myProperty) -> void
+    public function assoc(): array
     {
-        let this->myProperty = myProperty;
+        return [
+            'test' => true,
+            'first' => 'ok',
+            3 => 123,
+        ];
     }
 
-    public function getMyProperty()
+    public function index(): array
     {
-        return this->myProperty;
+        return [
+            'first',
+            2,
+            true
+        ];
     }
-
 }

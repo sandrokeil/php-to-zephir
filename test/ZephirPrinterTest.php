@@ -166,4 +166,34 @@ CODE;
 
         $this->assertEquals($expectedCode, $current, $current);
     }
+
+    /**
+     * @test
+     */
+    public function it_converts_class_return_array(): void
+    {
+        $code = file_get_contents(__DIR__ . '/Mock/ClassReturnArray.php');
+        $expectedCode = file_get_contents(__DIR__ . '/Zephir/ClassReturnArray.zep');
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
+
+    /**
+     * @test
+     */
+    public function it_converts_class_constants(): void
+    {
+        $code = file_get_contents(__DIR__ . '/Mock/ClassConstants.php');
+        $expectedCode = file_get_contents(__DIR__ . '/Zephir/ClassConstants.zep');
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
 }

@@ -8,17 +8,9 @@
 
 namespace PhpToZephirTest\Mock;
 
-class ClassProperty
+class ClassConstants
 {
-    protected myProperty;
-    public function setMyProperty(var myProperty) -> void
-    {
-        let this->myProperty = myProperty;
-    }
-
-    public function getMyProperty()
-    {
-        return this->myProperty;
-    }
-
+    const FIRST = "testing";
+    const SECOND = 2;
+    const THIRD = true;
 }

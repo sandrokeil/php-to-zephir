@@ -1,0 +1,69 @@
+{
+  "name": "sandrokeil/php-to-zephir",
+  "description": "Convert PHP 7 files to Zephir zep files",
+  "type": "library",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "php",
+    "extension",
+    "converter",
+    "zephir",
+    "zep"
+  ],
+  "authors": [
+    {
+      "name": "Sandro Keil",
+      "homepage": "https://sandro-keil.de",
+      "role": "maintainer"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "^7.1"
+  },
+  "require-dev": {
+    "nikic/php-parser": "^4.1",
+    "phpunit/phpunit": "^7.4",
+    "roave/security-advisories": "dev-master",
+    "malukenho/docheader": "^0.1.7",
+    "squizlabs/php_codesniffer": "^2.9.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "PhpToZephir\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PhpToZephirTest\\": "test/"
+    }
+  },
+  "scripts": {
+    "check": [
+      "@cs-check",
+      "@docheader",
+      "@test"
+    ],
+    "cs-check": "phpcs",
+    "cs-fix": "phpcbf",
+    "test": "phpunit --colors=always",
+    "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
+    "docheader": "docheader check src/ test/"
+  },
+  "bin": [
+    "bin/php2zephir"
+  ],
+  "archive": {
+    "exclude": [
+      ".coveralls.yml",
+      ".travis.yml",
+      "build",
+      "phpunit.xml*",
+      "test"
+    ]
+  }
+}

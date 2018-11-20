@@ -270,4 +270,46 @@ CODE;
 
         $this->assertEquals($expectedCode, $current, $current);
     }
+
+    /**
+     * @test
+     */
+    public function it_converts_post_increment(): void
+    {
+        $code = <<<'CODE'
+<?php
+$types++;
+CODE;
+
+        $expectedCode = <<<'CODE'
+let types++;
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
+
+    /**
+     * @test
+     */
+    public function it_converts_coalesce(): void
+    {
+        $code = <<<'CODE'
+<?php
+$types['test'] ?? 'default';
+CODE;
+
+        $expectedCode = <<<'CODE'
+let isset(types["test"]) ? types["test"] : "default";
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
 }

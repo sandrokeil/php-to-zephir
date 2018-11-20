@@ -15,6 +15,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Expr\AssignOp;
+use PhpParser\Node\Expr\BinaryOp;
 
 /**
  * Zephir Printer
@@ -142,6 +143,11 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
                 $matches = [];
                 if (1 === preg_match('/(@return +)([\|\\a-z]+\n)/i', $comment->getText(), $matches)) {
                     $returnType = trim($matches[2]);
+                    $split = strpos($returnType, ' ');
+
+                    if (false !== $split) {
+                        $returnType = substr($returnType, 0, $split);
+                    }
 
                     if ($returnType === 'mixed') {
                         $returnType = null;
@@ -253,6 +259,26 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
     protected function pExpr_AssignOp_Pow(AssignOp\Pow $node)
     {
         return 'let ' . parent::pExpr_AssignOp_Pow($node);
+    }
+
+    protected function pExpr_PostInc(Expr\PostInc $node)
+    {
+        return 'let ' . parent::pExpr_PostInc($node);
+    }
+
+    protected function pExpr_PostDec(Expr\PostDec $node)
+    {
+        return 'let ' . parent::pExpr_PostDec($node);
+    }
+
+    protected function pExpr_BinaryOp_Coalesce(BinaryOp\Coalesce $node)
+    {
+        [$precedence, $associativity] = $this->precedenceMap[BinaryOp\Coalesce::class];
+
+        $left = $this->pPrec($node->left, $precedence, $associativity, -1);
+        $right = $this->pPrec($node->right, $precedence, $associativity, 1);
+
+        return 'let isset(' . $left . ') ? ' . $left  . ' : ' . $right;
     }
 
     protected function pSingleQuotedString(string $string)

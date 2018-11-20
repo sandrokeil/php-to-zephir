@@ -19,10 +19,6 @@ class ClassMethodsReturnTypes
      */
     public function getSomeData($a)
     {
-        if ($a === false) {
-            return false;
-        }
-        return 'error';
     }
 
     /**
@@ -30,6 +26,15 @@ class ClassMethodsReturnTypes
      * @return mixed
      */
     public function mixed($a)
+    {
+    }
+
+    /**
+     * @param $a
+     * @return string|array|object awesome Data
+     * @throws \RuntimeException if possible
+     */
+    public function data($a)
     {
     }
 }

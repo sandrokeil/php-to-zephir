@@ -14,6 +14,7 @@ namespace PhpToZephir;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Expr\AssignOp;
 
 /**
  * Zephir Printer
@@ -186,7 +187,72 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
 
     protected function pExpr_Assign(Expr\Assign $node)
     {
-        return 'let ' . $this->pInfixOp(Expr\Assign::class, $node->var, ' = ', $node->expr);
+        return 'let ' . parent::pExpr_Assign($node);
+    }
+
+    protected function pExpr_AssignRef(Expr\AssignRef $node)
+    {
+        return 'let ' . parent::pExpr_AssignRef($node);
+    }
+
+    protected function pExpr_AssignOp_Plus(AssignOp\Plus $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_Plus($node);
+    }
+
+    protected function pExpr_AssignOp_Minus(AssignOp\Minus $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_Minus($node);
+    }
+
+    protected function pExpr_AssignOp_Mul(AssignOp\Mul $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_Mul($node);
+    }
+
+    protected function pExpr_AssignOp_Div(AssignOp\Div $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_Div($node);
+    }
+
+    protected function pExpr_AssignOp_Concat(AssignOp\Concat $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_Concat($node);
+    }
+
+    protected function pExpr_AssignOp_Mod(AssignOp\Mod $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_Mod($node);
+    }
+
+    protected function pExpr_AssignOp_BitwiseAnd(AssignOp\BitwiseAnd $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_BitwiseAnd($node);
+    }
+
+    protected function pExpr_AssignOp_BitwiseOr(AssignOp\BitwiseOr $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_BitwiseOr($node);
+    }
+
+    protected function pExpr_AssignOp_BitwiseXor(AssignOp\BitwiseXor $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_BitwiseXor($node);
+    }
+
+    protected function pExpr_AssignOp_ShiftLeft(AssignOp\ShiftLeft $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_ShiftLeft($node);
+    }
+
+    protected function pExpr_AssignOp_ShiftRight(AssignOp\ShiftRight $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_ShiftRight($node);
+    }
+
+    protected function pExpr_AssignOp_Pow(AssignOp\Pow $node)
+    {
+        return 'let ' . parent::pExpr_AssignOp_Pow($node);
     }
 
     protected function pSingleQuotedString(string $string)

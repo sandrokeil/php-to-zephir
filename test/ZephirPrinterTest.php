@@ -222,4 +222,52 @@ CODE;
 
         $this->assertEquals($expectedCode, $current, $current);
     }
+
+    /**
+     * @test
+     */
+    public function it_converts_string_concat(): void
+    {
+        $code = <<<'CODE'
+<?php
+$types = '';
+
+$types .= 'test';
+CODE;
+
+        $expectedCode = <<<'CODE'
+let types = "";
+let types .= "test";
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
+
+    /**
+     * @test
+     */
+    public function it_converts_assign_plus(): void
+    {
+        $code = <<<'CODE'
+<?php
+$types = 1;
+
+$types += 1;
+CODE;
+
+        $expectedCode = <<<'CODE'
+let types = 1;
+let types += 1;
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
 }

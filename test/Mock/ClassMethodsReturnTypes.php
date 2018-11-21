@@ -37,4 +37,8 @@ class ClassMethodsReturnTypes
     public function data($a)
     {
     }
+
+    public function getId(): ?string
+    {
+    }
 }

@@ -134,6 +134,10 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
             $returnType = $this->p($node->returnType);
         }
 
+        if ($returnType !== null && 0 === strpos($returnType, '?')) {
+            $returnType = substr($returnType, 1) . '|null';
+        }
+
         if (null !== $node->returnType && $node->returnType->getType() === 'Name') {
             $returnType = '<' . $this->p($node->returnType) . '>';
         }
@@ -278,7 +282,17 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
         $left = $this->pPrec($node->left, $precedence, $associativity, -1);
         $right = $this->pPrec($node->right, $precedence, $associativity, 1);
 
-        return 'let isset(' . $left . ') ? ' . $left  . ' : ' . $right;
+        return 'isset(' . $left . ') ? ' . $left  . ' : ' . $right;
+    }
+
+    protected function pExpr_BinaryOp_Concat(BinaryOp\Concat $node)
+    {
+        [$precedence, $associativity] = $this->precedenceMap[BinaryOp\Concat::class];
+
+        $left = $this->pPrec($node->left, $precedence, $associativity, -1);
+        $right = $this->pPrec($node->right, $precedence, $associativity, 1);
+
+        return $this->convertToDoubleQuotes($left) . ' . ' . $this->convertToDoubleQuotes($right);
     }
 
     protected function pSingleQuotedString(string $string)
@@ -287,5 +301,13 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
             return '\'' . addcslashes($string, '\'\\') . '\'';
         }
         return '"' . addcslashes($string, '"\\') . '"';
+    }
+
+    private function convertToDoubleQuotes(string $value)
+    {
+        if (strlen($value) === 3 && strpos($value, "'") === 0 && $value[2] === "'") {
+            return '"' . $value[1] . '"';
+        }
+        return $value;
     }
 }

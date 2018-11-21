@@ -35,4 +35,8 @@ class ClassMethodsReturnTypes
     {
     }
 
+    public function getId() -> string|null
+    {
+    }
+
 }

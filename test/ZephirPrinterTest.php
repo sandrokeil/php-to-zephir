@@ -233,11 +233,13 @@ CODE;
 $types = '';
 
 $types .= 'test';
+$types = $types . '/';
 CODE;
 
         $expectedCode = <<<'CODE'
 let types = "";
 let types .= "test";
+let types = types . "/";
 CODE;
 
         $ast = $this->parser->parse($code);
@@ -299,11 +301,11 @@ CODE;
     {
         $code = <<<'CODE'
 <?php
-$types['test'] ?? 'default';
+$test = $types['test'] ?? 'default';
 CODE;
 
         $expectedCode = <<<'CODE'
-let isset(types["test"]) ? types["test"] : "default";
+let test = isset(types["test"]) ? types["test"] : "default";
 CODE;
 
         $ast = $this->parser->parse($code);

@@ -1,0 +1,37 @@
+{
+    "stub": true,
+    "main": "bin/php2zephir.php",
+    "chmod": "0755",
+    "compression": "GZ",
+    "compactors": [
+        "Herrera\\Box\\Compactor\\Php"
+    ],
+    "directories": [
+        "src/"
+    ],
+    "files": [
+        "LICENSE.md",
+        "bin/php2zephir.php"
+    ],
+    "finder": [
+        {
+            "notName": "/LICENSE|.*\\.md|.*\\.dist|Makefile|composer\\.json|composer\\.lock/",
+            "exclude": [
+                "doc",
+                "test",
+                "test_old",
+                "tests",
+                "Tests",
+                "vendor-bin"
+            ],
+            "in": "vendor"
+        },
+        {
+            "name": "composer.json",
+            "in": "."
+        }
+    ],
+    "intercept": true,
+    "metadata": "Converts PHP 7 files to Zephir zep files",
+    "output": "build/php2zephir.phar"
+}

@@ -84,7 +84,7 @@ class Prototype extends AbstractCommand
     {
         $ast = $this->parser->parse($fileContent);
         $ast = $this->traverser->traverse($ast);
-        $this->prototypeCode  .= $this->printer->prettyPrint($ast);
+        $this->prototypeCode  .= $this->printer->prettyPrint($ast) . PHP_EOL;
     }
 
     protected function finished(): void

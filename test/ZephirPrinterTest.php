@@ -314,4 +314,33 @@ CODE;
 
         $this->assertEquals($expectedCode, $current, $current);
     }
+
+    /**
+     * @test
+     */
+    public function it_initializes_local_variables(): void
+    {
+        $this->markTestSkipped("Don't know how");
+        $code = <<<'CODE'
+<?php
+class Test
+{
+    public function testing()
+    {
+        $test = 0;
+        
+        $test = 123;
+    }
+}
+CODE;
+
+        $expectedCode = <<<'CODE'
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
 }

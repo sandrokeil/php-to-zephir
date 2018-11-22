@@ -6,59 +6,69 @@
  * @copyright Copyright (c) 2018 Sandro Keil
  * @license   http://github.com/sandrokeil/php-to-zephir/blob/master/LICENSE.md New BSD License
  */
+
 namespace PhpToZephir;
 
-use PhpParser\ParserFactory;
-use PhpParser\NodeTraverser;
+if (version_compare('7.1', PHP_VERSION, '>')) {
+    fwrite(
+        STDERR,
+        'This version of php2zephir requires PHP >= 7.1; using the latest version of PHP is highly recommended.' . PHP_EOL
+    );
 
-// Setup/verify autoloading
-
-if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
-    require $a;
-} elseif (file_exists($a = __DIR__ . '/../../../autoload.php')) {
-    require $a;
-} elseif (file_exists($a = __DIR__ . '/../vendor/autoload.php')) {
-    require $a;
-} else {
-    fwrite(STDERR, 'Cannot locate autoloader; please run "composer install"' . PHP_EOL);
-    exit(1);
+    die(1);
 }
-$argv = array_slice($argv, 1);
-$command = array_shift($argv);
-$help = <<<EOF
-<info>Usage:</info>
-  command [options] [arguments]
-<info>Options:</info>
-  <value>-h, --help, help</value>          Display this help message
-<info>Available commands:</info>
-  <value>convert</value>           Convert PHP file to Zephir
-EOF;
 
-$parser = (new ParserFactory)->create(ParserFactory::ONLY_PHP7);
-$traverser = new NodeTraverser();
-$zephirPrinter = new ZephirPrinter();
+if (!ini_get('date.timezone')) {
+    ini_set('date.timezone', 'UTC');
+}
 
-try {
-    switch ($command) {
-        case 'convert':
-            $input = $argv[0];
-            $output = $argv[1];
-            $ast = $parser->parse(file_get_contents($input));
-            $ast = $traverser->traverse($ast);
-
-            $zep = $zephirPrinter->prettyPrintFile($ast);
-            file_put_contents($output, $zep);
-
-            exit(0);
-        case '-h':
-        case '--help':
-        case 'help':
-            echo $help;
-            exit(0);
-        default:
-            echo $help;
-            exit(1);
+foreach (
+    [
+        __DIR__ . '/../../../autoload.php',
+        __DIR__ . '/../../autoload.php',
+        __DIR__ . '/../vendor/autoload.php',
+        __DIR__ . '/vendor/autoload.php',
+    ] as $file
+) {
+    if (file_exists($file)) {
+        define('PHP2ZEHPIR_COMPOSER_INSTALL', $file);
+        break;
     }
-} catch (\Throwable $e) {
-    exit(1);
 }
+
+unset($file);
+
+if (!defined('PHP2ZEHPIR_COMPOSER_INSTALL')) {
+    fwrite(STDERR,
+        'You need to set up the project dependencies using the following commands:' . PHP_EOL .
+        'wget http://getcomposer.org/composer.phar' . PHP_EOL .
+        'php composer.phar install' . PHP_EOL
+    );
+
+    die(1);
+}
+
+require PHP2ZEHPIR_COMPOSER_INSTALL;
+
+use Symfony\Component\Console\Application;
+use PhpToZephir\Console\Command;
+
+$description = <<<DESC
+=================================
+php2zephir command line interface
+=================================
+
+Converts PHP 7 files to zep files and create prototype classes for Zephir.
+
+DESC;
+
+$application = new Application($description);
+
+$application->addCommands(
+    [
+        new Command\Zep(),
+        new Command\Prototype(),
+    ]
+);
+
+$application->run();

@@ -35,3 +35,9 @@ A PHAR file can be generated with [box](https://github.com/humbug/box).
 ```
 $ php box.phar compile
 ```
+
+## Unit Tests
+
+```
+$ docker-compose run --rm php vendor/bin/phpunit
+```

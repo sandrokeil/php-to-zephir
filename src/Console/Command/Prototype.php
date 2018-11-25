@@ -11,12 +11,14 @@ declare(strict_types=1);
 
 namespace PhpToZephir\Console\Command;
 
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
 use PhpToZephir\Exception\CouldNotCreateDirectoryException;
 use PhpToZephir\Exception\CouldNotWriteFileException;
 use PhpToZephir\Exception\RuntimeException;
+use PhpToZephir\PhpParser\NodeVisitor\SortNamespaceClasses;
 use Symfony\Component\Console\Input\InputArgument;
 use PhpParser\Node;
-use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
@@ -43,13 +45,21 @@ class Prototype extends AbstractCommand
      */
     private $prototypeCode;
 
+    /**
+     * @var SortNamespaceClasses
+     */
+    private $sortNamespaceClasses;
+
     public function __construct()
     {
         parent::__construct();
+
         $this->parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $this->sortNamespaceClasses = new SortNamespaceClasses();
 
         $this->traverser = new NodeTraverser();
-        $this->traverser->addVisitor(new class extends NodeVisitorAbstract {
+        $this->traverser->addVisitor(new class extends NodeVisitorAbstract
+        {
             public function leaveNode(Node $node)
             {
                 if ($node instanceof Node\Stmt\Declare_) {
@@ -59,14 +69,26 @@ class Prototype extends AbstractCommand
                     return NodeTraverser::REMOVE_NODE;
                 }
             }
+
             public function enterNode(Node $node)
             {
                 if ($node instanceof Node\Stmt\ClassMethod) {
                     // Clean out the function body
-                    $node->stmts = [];
+                    if ($node->stmts !== null) {
+                        $node->stmts = [];
+                    }
+                    $node->setAttribute('comments', null);
+                }
+                if ($node instanceof Node\Stmt\Class_) {
+                    $node->setAttribute('comments', null);
+                }
+                if ($node instanceof Node\Stmt\Interface_) {
+                    $node->setAttribute('comments', null);
                 }
             }
         });
+        $this->traverser->addVisitor(new NameResolver());
+        $this->traverser->addVisitor($this->sortNamespaceClasses);
 
         $this->printer = new Standard();
     }
@@ -99,8 +121,9 @@ class Prototype extends AbstractCommand
         if (! @mkdir($dir, 0755, true) && ! is_dir($dir)) {
             throw CouldNotCreateDirectoryException::forDir($dir);
         }
+        $code = "<?php \n" . $this->sortNamespaceClasses->printSortedNamespaces($this->printer);
 
-        if (false === file_put_contents($this->to, "<?php \n" . $this->prototypeCode)) {
+        if (false === file_put_contents($this->to, $code)) {
             throw CouldNotWriteFileException::forFile($to);
         }
 

@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace PhpToZephir\Console\Command;
 
-use PhpToZephir\Exception\CouldNotCreateDirectoryException;
 use PhpToZephir\Exception\FileNotExistsException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -70,7 +69,8 @@ abstract class AbstractCommand extends Command
     private function getFileContent(string $from): \Generator
     {
         if (is_file($from)) {
-            yield [$file = file_get_contents($from)];
+            yield [$from, file_get_contents($from)];
+            return;
         }
 
         $directory = new RecursiveDirectoryIterator($from);

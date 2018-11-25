@@ -1,0 +1,10 @@
+version: '2'
+services:
+  # To run tests docker-compose run --rm php vendor/bin/phpunit
+  php:
+    image: prooph/php:7.2-cli-xdebug
+    environment:
+      PHP_IDE_CONFIG: "serverName=application"
+      XDEBUG_CONFIG: "remote_host=phpstorm"
+    volumes:
+    - "./:/app"

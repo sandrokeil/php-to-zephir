@@ -12,6 +12,7 @@ namespace PhpToZephirTest;
 
 use PhpParser\ParserFactory;
 use PhpParser\NodeTraverser;
+use PhpToZephir\PhpParser\NodeVisitor\InitLocalVariable;
 use PhpToZephir\ZephirPrinter;
 use PHPUnit\Framework\TestCase;
 
@@ -36,6 +37,7 @@ class ZephirPrinterTest extends TestCase
     {
         $this->parser = (new ParserFactory)->create(ParserFactory::ONLY_PHP7);
         $this->traverser = new NodeTraverser();
+        $this->traverser->addVisitor(new InitLocalVariable());
         $this->zephirPrinter = new ZephirPrinter();
     }
 
@@ -320,21 +322,49 @@ CODE;
      */
     public function it_initializes_local_variables(): void
     {
-        $this->markTestSkipped("Don't know how");
         $code = <<<'CODE'
 <?php
-class Test
+class TestClass
 {
-    public function testing()
+    public function testingFunc()
     {
-        $test = 0;
-        
-        $test = 123;
+        $variable = 0;
+        $otherVariable = 123;
+        return $otherVariable;
+    }
+    public function otherFunc()
+    {
+        $variable = 123;
+        $variable = 50;
+        $variable = $this->testingFunc();
+        $newVariable = $this->testingFunc();
     }
 }
 CODE;
 
         $expectedCode = <<<'CODE'
+class TestClass
+{
+    public function testingFunc()
+    {
+        var otherVariable;
+        var variable;
+        let variable = 0;
+        let otherVariable = 123;
+        return otherVariable;
+    }
+
+    public function otherFunc()
+    {
+        var newVariable;
+        var variable;
+        let variable = 123;
+        let variable = 50;
+        let variable = this->testingFunc();
+        let newVariable = this->testingFunc();
+    }
+
+}
 CODE;
 
         $ast = $this->parser->parse($code);

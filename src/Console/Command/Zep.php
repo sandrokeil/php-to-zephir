@@ -16,9 +16,9 @@ use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpToZephir\Exception\CouldNotCreateDirectoryException;
 use PhpToZephir\Exception\CouldNotWriteFileException;
+use PhpToZephir\PhpParser\NodeVisitor\InitLocalVariable;
 use PhpToZephir\ZephirPrinter;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 
 class Zep extends AbstractCommand
 {
@@ -42,6 +42,7 @@ class Zep extends AbstractCommand
         parent::__construct();
         $this->parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
         $this->traverser = new NodeTraverser();
+        $this->traverser->addVisitor(new InitLocalVariable());
         $this->printer = new ZephirPrinter();
     }
 

@@ -66,7 +66,13 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
         if ($node->name instanceof Expr) {
             return '${' . $this->p($node->name) . '}';
         } else {
-            return $node->name;
+            $code = $node->name;
+
+            if (0 === count($node->getAttributes())) {
+                $code = 'var ' . $code . ';';
+            }
+
+            return $code;
         }
     }
 

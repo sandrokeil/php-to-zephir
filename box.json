@@ -1,10 +1,8 @@
 {
-    "stub": true,
     "main": "bin/php2zephir.php",
-    "chmod": "0755",
     "compression": "GZ",
     "compactors": [
-        "Herrera\\Box\\Compactor\\Php"
+        "KevinGH\\Box\\Compactor\\Php"
     ],
     "directories": [
         "src/"

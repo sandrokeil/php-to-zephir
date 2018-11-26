@@ -214,6 +214,8 @@ CODE;
 
         $expectedCode = <<<'CODE'
 let types = ["one", "two", "three"];
+var key;
+var type;
 for key, type in types {
 }
 CODE;

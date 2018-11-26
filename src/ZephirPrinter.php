@@ -100,8 +100,17 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
 
     protected function pStmt_Foreach(Stmt\Foreach_ $node)
     {
-        return 'for ' . (null !== $node->keyVar ? $this->p($node->keyVar) . ', ' : '')
-            . ($node->byRef ? '&' : '') . $this->p($node->valueVar) . ' in ' . $this->p($node->expr) . ' {'
+        $code = '';
+        $key = null !== $node->keyVar ? $this->p($node->keyVar) : '';
+        $value = $this->p($node->valueVar);
+
+        if ($key !== '') {
+            $code .= 'var ' . $key . ';' . PHP_EOL;
+        }
+        $code .= 'var ' . $value . ';' . PHP_EOL;
+
+        return $code . 'for ' . (null !== $node->keyVar ? $this->p($node->keyVar) . ', ' : '')
+            . ($node->byRef ? '&' : '') . $value . ' in ' . $this->p($node->expr) . ' {'
             . $this->pStmts($node->stmts) . $this->nl . '}';
     }
 

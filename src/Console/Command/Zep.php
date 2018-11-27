@@ -17,6 +17,8 @@ use PhpParser\PrettyPrinter\Standard;
 use PhpToZephir\Exception\CouldNotCreateDirectoryException;
 use PhpToZephir\Exception\CouldNotWriteFileException;
 use PhpToZephir\PhpParser\NodeVisitor\InitLocalVariable;
+use PhpToZephir\PhpParser\NodeVisitor\RemoveUseFunction;
+use PhpToZephir\PhpParser\NodeVisitor\UnsetSplitter;
 use PhpToZephir\ZephirPrinter;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -43,6 +45,8 @@ class Zep extends AbstractCommand
         $this->parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
         $this->traverser = new NodeTraverser();
         $this->traverser->addVisitor(new InitLocalVariable());
+        $this->traverser->addVisitor(new RemoveUseFunction());
+        $this->traverser->addVisitor(new UnsetSplitter());
         $this->printer = new ZephirPrinter();
     }
 

@@ -325,4 +325,11 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
         }
         return $value;
     }
+
+    protected function pStmt_Catch(Stmt\Catch_ $node)
+    {
+        return 'catch ' . $this->pImplode($node->types, '|') . ', '
+            . $this->p($node->var)
+            . ' {' . $this->pStmts($node->stmts) . $this->nl . '}';
+    }
 }

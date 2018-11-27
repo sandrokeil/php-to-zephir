@@ -41,3 +41,8 @@ $ php box.phar compile
 ```
 $ docker-compose run --rm php vendor/bin/phpunit
 ```
+
+
+## Limitations
+
+- Can not handle reserved variable names like `$resource`, it would result in compilation error

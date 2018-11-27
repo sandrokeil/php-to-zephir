@@ -13,6 +13,8 @@ namespace PhpToZephirTest;
 use PhpParser\ParserFactory;
 use PhpParser\NodeTraverser;
 use PhpToZephir\PhpParser\NodeVisitor\InitLocalVariable;
+use PhpToZephir\PhpParser\NodeVisitor\RemoveUseFunction;
+use PhpToZephir\PhpParser\NodeVisitor\UnsetSplitter;
 use PhpToZephir\ZephirPrinter;
 use PHPUnit\Framework\TestCase;
 
@@ -38,6 +40,8 @@ class ZephirPrinterTest extends TestCase
         $this->parser = (new ParserFactory)->create(ParserFactory::ONLY_PHP7);
         $this->traverser = new NodeTraverser();
         $this->traverser->addVisitor(new InitLocalVariable());
+        $this->traverser->addVisitor(new RemoveUseFunction());
+        $this->traverser->addVisitor(new UnsetSplitter());
         $this->zephirPrinter = new ZephirPrinter();
     }
 
@@ -367,6 +371,79 @@ class TestClass
     }
 
 }
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
+
+    /**
+     * @test
+     */
+    public function it_removes_use_function_imports(): void
+    {
+        $code = <<<'CODE'
+<?php
+namespace MyAwesome\Names;
+
+use const E_WARNING;
+use function strtolower;
+
+CODE;
+
+        $expectedCode = <<<'CODE'
+namespace MyAwesome\Names;
+
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
+
+    /**
+     * @test
+     */
+    public function it_converts_try_catch(): void
+    {
+        $code = <<<'CODE'
+<?php
+try {
+} catch (\Throwable $e) {
+}
+CODE;
+
+        $expectedCode = <<<'CODE'
+try {
+} catch \Throwable, e {
+}
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
+
+    /**
+     * @test
+     */
+    public function it_converts_unset(): void
+    {
+        $code = <<<'CODE'
+<?php
+unset($other, $variable);
+CODE;
+
+        $expectedCode = <<<'CODE'
+unset(other);
+unset(variable);
 CODE;
 
         $ast = $this->parser->parse($code);

@@ -42,6 +42,9 @@ $ php box.phar compile
 $ docker-compose run --rm php vendor/bin/phpunit
 ```
 
+## Zephir Docker Image
+
+If you want to compile your Zephir zep files for PHP Alpine 3.8 Docker images try my [Zephir Docker images](https://github.com/sandrokeil/docker-files/tree/master/zephir).
 
 ## Limitations
 

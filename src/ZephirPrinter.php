@@ -16,6 +16,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Expr\AssignOp;
 use PhpParser\Node\Expr\BinaryOp;
+use PhpToZephir\PhpParser\NodeVisitor\InitLocalVariable;
 
 /**
  * Zephir Printer

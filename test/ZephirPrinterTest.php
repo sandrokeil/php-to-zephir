@@ -472,13 +472,44 @@ CODE;
         /**
          * var firstName;
          * var lastName;
-         * let db5910704831 = ["John", "Doe"];
-         * let firstName = db5910704831[0]
-         * let lastName = db5910704831[1]
+         * let adb5910704831 = ["John", "Doe"];
+         * let firstName = db5910704831[0];
+         * let lastName = db5910704831[1];
          */
         $this->assertTrue(strpos($current, 'var firstName;') !== false, $current);
         $this->assertTrue(strpos($current, 'var lastName;') !== false, $current);
         $this->assertTrue(strpos($current, 'let firstName = ') !== false, $current);
         $this->assertTrue(strpos($current, 'let lastName = ') !== false, $current);
+        $this->assertTrue(strpos($current, '[0];') !== false, $current);
+        $this->assertTrue(strpos($current, '[1];') !== false, $current);
+    }
+
+    /**
+     * @test
+     */
+    public function it_converts_array_destructuring_with_method_call(): void
+    {
+        $code = <<<'CODE'
+<?php
+[$firstName, $lastName] = $this->methodCall($data);
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        /**
+         * var firstName;
+         * var lastName;
+         * let adb5910704831 = $this->methodCall($data);
+         * let firstName = db5910704831[0];
+         * let lastName = db5910704831[1];
+         */
+        $this->assertTrue(strpos($current, 'var firstName;') !== false, $current);
+        $this->assertTrue(strpos($current, 'var lastName;') !== false, $current);
+        $this->assertTrue(strpos($current, 'let firstName = ') !== false, $current);
+        $this->assertTrue(strpos($current, 'let lastName = ') !== false, $current);
+        $this->assertTrue(strpos($current, '[0];') !== false, $current);
+        $this->assertTrue(strpos($current, '[1];') !== false, $current);
     }
 }

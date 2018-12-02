@@ -19,23 +19,28 @@ class ArrayDestructuring extends NodeVisitorAbstract
     {
         if ($node instanceof Node\Stmt\Expression
             && $node->expr instanceof Node\Expr\Assign
-            && $node->expr->expr instanceof Node\Expr\Array_
+            && ($node->expr->expr instanceof Node\Expr\MethodCall || $node->expr->expr instanceof Node\Expr\Array_)
             && $node->expr->var instanceof Node\Expr\Array_
         ) {
             $stmts = array_map(function (Node\Expr\ArrayItem $item) {
                 return new Node\Expr\Variable($item->value->name);
             }, $node->expr->var->items);
 
-            $arrayName = bin2hex(random_bytes(6));
+            $arrayName = 'a' . bin2hex(random_bytes(6));
             $key = -1;
             $destructuring = array_map(function (Node\Expr\ArrayItem $item) use ($stmts, $arrayName, &$key) {
                 $key++;
                 $name = clone $stmts[$key];
                 $name->setAttribute('init', false);
-                return new Node\Expr\Assign($name, new Node\Expr\ArrayDimFetch(
-                    new Node\Expr\Variable($arrayName, $item->getAttributes()),
-                    new Node\Scalar\LNumber($key)
-                ));
+                return new Node\Stmt\Expression(
+                    new Node\Expr\Assign(
+                        $name,
+                        new Node\Expr\ArrayDimFetch(
+                            new Node\Expr\Variable($arrayName, $item->getAttributes()),
+                            new Node\Scalar\LNumber($key)
+                        )
+                    )
+                );
             }, $node->expr->var->items);
 
             $node->expr->var = new Node\Expr\Variable($arrayName, $node->getAttributes());

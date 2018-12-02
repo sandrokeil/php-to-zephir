@@ -19,7 +19,10 @@ class ArrayDestructuring extends NodeVisitorAbstract
     {
         if ($node instanceof Node\Stmt\Expression
             && $node->expr instanceof Node\Expr\Assign
-            && ($node->expr->expr instanceof Node\Expr\MethodCall || $node->expr->expr instanceof Node\Expr\Array_)
+            && ($node->expr->expr instanceof Node\Expr\MethodCall
+                || $node->expr->expr instanceof Node\Expr\FuncCall
+                || $node->expr->expr instanceof Node\Expr\Array_
+            )
             && $node->expr->var instanceof Node\Expr\Array_
         ) {
             $stmts = array_map(function (Node\Expr\ArrayItem $item) {

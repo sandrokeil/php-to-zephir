@@ -12,6 +12,7 @@ namespace PhpToZephirTest;
 
 use PhpParser\ParserFactory;
 use PhpParser\NodeTraverser;
+use PhpToZephir\PhpParser\NodeVisitor\ArrayDestructuring;
 use PhpToZephir\PhpParser\NodeVisitor\InitLocalVariable;
 use PhpToZephir\PhpParser\NodeVisitor\RemoveUseFunction;
 use PhpToZephir\PhpParser\NodeVisitor\UnsetSplitter;
@@ -42,6 +43,7 @@ class ZephirPrinterTest extends TestCase
         $this->traverser->addVisitor(new InitLocalVariable());
         $this->traverser->addVisitor(new RemoveUseFunction());
         $this->traverser->addVisitor(new UnsetSplitter());
+        $this->traverser->addVisitor(new ArrayDestructuring());
         $this->zephirPrinter = new ZephirPrinter();
     }
 
@@ -451,5 +453,32 @@ CODE;
         $current = $this->zephirPrinter->prettyPrintFile($ast);
 
         $this->assertEquals($expectedCode, $current, $current);
+    }
+
+    /**
+     * @test
+     */
+    public function it_converts_array_destructuring(): void
+    {
+        $code = <<<'CODE'
+<?php
+[$firstName, $lastName] = ["John", "Doe"];
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        /**
+         * var firstName;
+         * var lastName;
+         * let db5910704831 = ["John", "Doe"];
+         * let firstName = db5910704831[0]
+         * let lastName = db5910704831[1]
+         */
+        $this->assertTrue(strpos($current, 'var firstName;') !== false, $current);
+        $this->assertTrue(strpos($current, 'var lastName;') !== false, $current);
+        $this->assertTrue(strpos($current, 'let firstName = ') !== false, $current);
+        $this->assertTrue(strpos($current, 'let lastName = ') !== false, $current);
     }
 }

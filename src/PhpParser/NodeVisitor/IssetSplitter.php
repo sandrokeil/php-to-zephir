@@ -48,11 +48,10 @@ class IssetSplitter extends NodeVisitorAbstract
             }
 
             $and = [];
-            for($i=0; $i < $number; $i+=2) {
-                $and[] = new Node\Expr\BinaryOp\BooleanAnd($issetConditions[$i], $issetConditions[$i+1]);
+            for ($i = 0; $i < $number; $i += 2) {
+                $and[] = new Node\Expr\BinaryOp\BooleanAnd($issetConditions[$i], $issetConditions[$i + 1]);
             }
             return $and;
-
         }
         return null;
     }

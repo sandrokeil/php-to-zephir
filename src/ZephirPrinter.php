@@ -326,7 +326,8 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
         return $value;
     }
 
-    protected function pStmt_TryCatch(Stmt\TryCatch $node) {
+    protected function pStmt_TryCatch(Stmt\TryCatch $node)
+    {
         $stmt = parent::pStmt_TryCatch($node);
 
         return 'var ' . $this->p($node->catches[0]->var) . ";\n" . $stmt;

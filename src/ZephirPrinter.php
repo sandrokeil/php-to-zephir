@@ -16,7 +16,6 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Expr\AssignOp;
 use PhpParser\Node\Expr\BinaryOp;
-use PhpToZephir\PhpParser\NodeVisitor\InitLocalVariable;
 
 /**
  * Zephir Printer
@@ -325,6 +324,12 @@ class ZephirPrinter extends \PhpParser\PrettyPrinter\Standard
             return '"' . $value[1] . '"';
         }
         return $value;
+    }
+
+    protected function pStmt_TryCatch(Stmt\TryCatch $node) {
+        $stmt = parent::pStmt_TryCatch($node);
+
+        return 'var ' . $this->p($node->catches[0]->var) . ";\n" . $stmt;
     }
 
     protected function pStmt_Catch(Stmt\Catch_ $node)

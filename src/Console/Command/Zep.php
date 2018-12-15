@@ -18,6 +18,7 @@ use PhpToZephir\Exception\CouldNotCreateDirectoryException;
 use PhpToZephir\Exception\CouldNotWriteFileException;
 use PhpToZephir\PhpParser\NodeVisitor\ArrayDestructuring;
 use PhpToZephir\PhpParser\NodeVisitor\InitLocalVariable;
+use PhpToZephir\PhpParser\NodeVisitor\IssetSplitter;
 use PhpToZephir\PhpParser\NodeVisitor\RemoveUseFunction;
 use PhpToZephir\PhpParser\NodeVisitor\UnsetSplitter;
 use PhpToZephir\ZephirPrinter;
@@ -48,6 +49,7 @@ class Zep extends AbstractCommand
         $this->traverser->addVisitor(new InitLocalVariable());
         $this->traverser->addVisitor(new RemoveUseFunction());
         $this->traverser->addVisitor(new UnsetSplitter());
+        $this->traverser->addVisitor(new IssetSplitter());
         $this->traverser->addVisitor(new ArrayDestructuring());
         $this->printer = new ZephirPrinter();
     }

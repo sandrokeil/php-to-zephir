@@ -14,6 +14,7 @@ use PhpParser\ParserFactory;
 use PhpParser\NodeTraverser;
 use PhpToZephir\PhpParser\NodeVisitor\ArrayDestructuring;
 use PhpToZephir\PhpParser\NodeVisitor\InitLocalVariable;
+use PhpToZephir\PhpParser\NodeVisitor\IssetSplitter;
 use PhpToZephir\PhpParser\NodeVisitor\RemoveUseFunction;
 use PhpToZephir\PhpParser\NodeVisitor\UnsetSplitter;
 use PhpToZephir\ZephirPrinter;
@@ -43,6 +44,7 @@ class ZephirPrinterTest extends TestCase
         $this->traverser->addVisitor(new InitLocalVariable());
         $this->traverser->addVisitor(new RemoveUseFunction());
         $this->traverser->addVisitor(new UnsetSplitter());
+        $this->traverser->addVisitor(new IssetSplitter());
         $this->traverser->addVisitor(new ArrayDestructuring());
         $this->zephirPrinter = new ZephirPrinter();
     }
@@ -421,6 +423,7 @@ try {
 CODE;
 
         $expectedCode = <<<'CODE'
+var e;
 try {
 } catch \Throwable, e {
 }
@@ -446,6 +449,33 @@ CODE;
         $expectedCode = <<<'CODE'
 unset(other);
 unset(variable);
+CODE;
+
+        $ast = $this->parser->parse($code);
+        $ast = $this->traverser->traverse($ast);
+        $current = $this->zephirPrinter->prettyPrintFile($ast);
+
+        $this->assertEquals($expectedCode, $current, $current);
+    }
+
+    /**
+     * @test
+     */
+    public function it_converts_isset(): void
+    {
+        $code = <<<'CODE'
+<?php
+if (true === isset($other, $variable)) {
+}
+if (isset($other, $variable)) {
+}
+CODE;
+
+        $expectedCode = <<<'CODE'
+if (true === (isset(other) && isset(variable))) {
+}
+if (isset(other) && isset(variable)) {
+}
 CODE;
 
         $ast = $this->parser->parse($code);

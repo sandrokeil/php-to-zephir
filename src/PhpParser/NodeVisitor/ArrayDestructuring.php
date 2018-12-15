@@ -21,6 +21,7 @@ class ArrayDestructuring extends NodeVisitorAbstract
             && $node->expr instanceof Node\Expr\Assign
             && ($node->expr->expr instanceof Node\Expr\MethodCall
                 || $node->expr->expr instanceof Node\Expr\FuncCall
+                || $node->expr->expr instanceof Node\Expr\StaticCall
                 || $node->expr->expr instanceof Node\Expr\Array_
             )
             && $node->expr->var instanceof Node\Expr\Array_

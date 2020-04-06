@@ -506,12 +506,12 @@ CODE;
          * let firstName = db5910704831[0];
          * let lastName = db5910704831[1];
          */
-        $this->assertTrue(strpos($current, 'var firstName;') !== false, $current);
-        $this->assertTrue(strpos($current, 'var lastName;') !== false, $current);
-        $this->assertTrue(strpos($current, 'let firstName = ') !== false, $current);
-        $this->assertTrue(strpos($current, 'let lastName = ') !== false, $current);
-        $this->assertTrue(strpos($current, '[0];') !== false, $current);
-        $this->assertTrue(strpos($current, '[1];') !== false, $current);
+        $this->assertNotFalse(strpos($current, 'var firstName;'), $current);
+        $this->assertNotFalse(strpos($current, 'var lastName;'), $current);
+        $this->assertNotFalse(strpos($current, 'let firstName = '), $current);
+        $this->assertNotFalse(strpos($current, 'let lastName = '), $current);
+        $this->assertNotFalse(strpos($current, '[0];'), $current);
+        $this->assertNotFalse(strpos($current, '[1];'), $current);
     }
 
     /**
@@ -535,12 +535,12 @@ CODE;
          * let firstName = db5910704831[0];
          * let lastName = db5910704831[1];
          */
-        $this->assertTrue(strpos($current, 'var firstName;') !== false, $current);
-        $this->assertTrue(strpos($current, 'var lastName;') !== false, $current);
-        $this->assertTrue(strpos($current, 'let firstName = ') !== false, $current);
-        $this->assertTrue(strpos($current, 'let lastName = ') !== false, $current);
-        $this->assertTrue(strpos($current, '[0];') !== false, $current);
-        $this->assertTrue(strpos($current, '[1];') !== false, $current);
+        $this->assertNotFalse(strpos($current, 'var firstName;'), $current);
+        $this->assertNotFalse(strpos($current, 'var lastName;'), $current);
+        $this->assertNotFalse(strpos($current, 'let firstName = '), $current);
+        $this->assertNotFalse(strpos($current, 'let lastName = '), $current);
+        $this->assertNotFalse(strpos($current, '[0];'), $current);
+        $this->assertNotFalse(strpos($current, '[1];'), $current);
     }
 
     /**
@@ -564,11 +564,11 @@ CODE;
          * let firstName = db5910704831[0];
          * let lastName = db5910704831[1];
          */
-        $this->assertTrue(strpos($current, 'var firstName;') !== false, $current);
-        $this->assertTrue(strpos($current, 'var lastName;') !== false, $current);
-        $this->assertTrue(strpos($current, 'let firstName = ') !== false, $current);
-        $this->assertTrue(strpos($current, 'let lastName = ') !== false, $current);
-        $this->assertTrue(strpos($current, '[0];') !== false, $current);
-        $this->assertTrue(strpos($current, '[1];') !== false, $current);
+        $this->assertNotFalse(strpos($current, 'var firstName;'), $current);
+        $this->assertNotFalse(strpos($current, 'var lastName;'), $current);
+        $this->assertNotFalse(strpos($current, 'let firstName = '), $current);
+        $this->assertNotFalse(strpos($current, 'let lastName = '), $current);
+        $this->assertNotFalse(strpos($current, '[0];'), $current);
+        $this->assertNotFalse(strpos($current, '[1];'), $current);
     }
 }
